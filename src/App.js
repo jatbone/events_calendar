@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import moment from 'config/moment';
 
 import reducer from 'reducer';
 import { StateProvider } from 'context/State';
