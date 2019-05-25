@@ -42,7 +42,10 @@ function App() {
       todayMoment: moment(),
       selectedDate: null
     },
-    events: fetchAllEvents()
+    events: fetchAllEvents(),
+    form: {
+      isHidden: true
+    }
   };
   return (
     <StateProvider initialState={initialState} reducer={reducer}>
