@@ -1,7 +1,22 @@
-import React from "react";
+import React from 'react';
+import moment from 'moment';
+
+import reducer from 'reducer';
+import { StateProvider } from 'context/State';
 
 function App() {
-  return <div>Start</div>;
+  const initialState = {
+    calendar: {
+      currentMoment: moment(),
+      todayMoment: moment(),
+      selectedDate: null
+    }
+  };
+  return (
+    <StateProvider initialState={initialState} reducer={reducer}>
+      App
+    </StateProvider>
+  );
 }
 
 export default App;
