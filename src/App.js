@@ -1,10 +1,14 @@
 import React from 'react';
-import moment from 'config/moment';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import 'config/moment';
+import moment from 'moment';
 
 import reducer from 'reducer';
 import { StateProvider } from 'context/State';
+
+import Layout from 'components/Layout';
+import { fetchAllEvents } from 'actions/events';
 
 import 'typeface-roboto';
 
@@ -37,13 +41,14 @@ function App() {
       currentMoment: moment(),
       todayMoment: moment(),
       selectedDate: null
-    }
+    },
+    events: fetchAllEvents()
   };
   return (
     <StateProvider initialState={initialState} reducer={reducer}>
       <MuiThemeProvider theme={theme}>
         <CssBaseline />
-        App
+        <Layout />
       </MuiThemeProvider>
     </StateProvider>
   );

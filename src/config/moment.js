@@ -5,5 +5,3 @@ import 'moment/locale/sk';
 const moment = extendMoment(Moment);
 
 moment.locale('sk');
-
-export default moment;
