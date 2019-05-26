@@ -42,7 +42,7 @@ const styles = theme => ({
   }
 });
 
-const DATE_FORMAT = 'LLL';
+const DATE_FORMAT = 'MMM DD,YYYY HH:mm';
 
 const Event = ({ data, classes }) => {
   const { name, startDate, endDate, note, color } = data;
