@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import moment from 'moment';
 
 import { useStateValue } from 'context/State';
 
@@ -14,6 +15,8 @@ import Grid from '@material-ui/core/Grid';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import Button from '@material-ui/core/Button';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const styles = theme => ({
   root: {
@@ -54,11 +57,12 @@ const useStylesCustomTextField = makeStyles(theme => ({
       backgroundColor: '#fff'
     },
     '&$focused': {
-      backgroundColor: 'red',
+      backgroundColor: '#fff',
       boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
       borderColor: theme.palette.primary.main
     }
-  }
+  },
+  focused: {}
 }));
 
 const CustomTextField = props => {
@@ -68,6 +72,30 @@ const CustomTextField = props => {
       InputProps={{ classes, disableUnderline: true }}
       InputLabelProps={{ shrink: true }}
       {...props}
+    />
+  );
+};
+
+const CustomDatePickerField = ({ onChange, ...rest }) => {
+  const datePickerRef = useRef(null);
+  const classes = useStylesCustomTextField();
+  useEffect(() => {
+    flatpickr(datePickerRef.current, {
+      onChange: (selectedDates, dateStr, instance) => {
+        console.log(instance);
+        console.log(dateStr);
+      },
+      enableTime: true,
+      time_24hr: true,
+      todayBtn: true
+    });
+  }, []);
+  return (
+    <TextField
+      InputProps={{ classes, disableUnderline: true }}
+      InputLabelProps={{ shrink: true }}
+      inputRef={datePickerRef}
+      {...rest}
     />
   );
 };
@@ -139,19 +167,15 @@ const Form = ({ classes }) => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.name}
-                    error={errors.name && touched.name && errors.name}
-                    helperText={
-                      errors.name && touched.name && errors.name
-                        ? errors.name
-                        : ''
-                    }
+                    error={errors.name && touched.name}
+                    helperText={errors.name && touched.name ? errors.name : ''}
                     fullWidth
                   />
                 </Grid>
               </Grid>
               <Grid container spacing={0}>
                 <Grid item xs={6}>
-                  <CustomTextField
+                  <CustomDatePickerField
                     label="Event start"
                     variant="filled"
                     id="start"
@@ -159,43 +183,21 @@ const Form = ({ classes }) => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.start}
-                    error={errors.start && touched.start && errors.start}
+                    error={errors.start && touched.start}
                     helperText={
-                      errors.start && touched.start && errors.start
-                        ? errors.start
-                        : ''
+                      errors.start && touched.start ? errors.start : ''
                     }
                     fullWidth
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <CustomTextField
-                    label="Event end"
-                    variant="filled"
-                    id="end"
-                    name="end"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.end}
-                    error={errors.end && touched.end && errors.end}
-                    helperText={
-                      errors.end && touched.end && errors.end ? errors.end : ''
-                    }
-                    fullWidth
-                  />
+                  2
                 </Grid>
               </Grid>
               <Grid container spacing={0}>
-                <Grid item xs>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                  >
-                    Primary
-                  </Button>
-                </Grid>
+                <Button color="primary" type="submit">
+                  Submit
+                </Button>
               </Grid>
             </form>
           )}
