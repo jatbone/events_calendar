@@ -1,9 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import moment from 'moment';
+import flatpickr from 'flatpickr';
+import ShortcutButtonsPlugin from 'shortcut-buttons-flatpickr';
 
 import { useStateValue } from 'context/State';
 
@@ -15,12 +17,13 @@ import Grid from '@material-ui/core/Grid';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import Button from '@material-ui/core/Button';
-import flatpickr from 'flatpickr';
+import AddCircle from '@material-ui/icons/AddCircle';
+
 import 'flatpickr/dist/flatpickr.min.css';
 
 const styles = theme => ({
   root: {
-    display: 'none',
+    display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
     backgroundColor: '#fff',
@@ -30,19 +33,31 @@ const styles = theme => ({
     left: 0,
     bottom: 0
   },
-  show: { display: 'flex' },
+  show: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    flexDirection: 'column'
+  },
   formSection: {
-    padding: theme.spacing(1)
+    padding: theme.spacing(1),
+    flex: 1
   },
   form: {
     display: 'flex',
-    flexWrap: 'wrap'
+    flex: 1,
+    flexWrap: 'wrap',
+    flexDirection: 'column'
   },
   formControl: {
     margin: theme.spacing(0)
   },
   filledInput: {
     borderRadius: '5px'
+  },
+  formFloatingFooter: {
+    width: '100%',
+    padding: theme.spacing(1),
+    borderTop: `1px solid ${theme.palette.grey[100]}`
   }
 });
 
@@ -76,87 +91,177 @@ const CustomTextField = props => {
   );
 };
 
-const CustomDatePickerField = ({ onChange, ...rest }) => {
+const useStylesDatepickerOverlay = makeStyles(theme => ({
+  wrapper: {
+    position: 'relative'
+  },
+  root: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    zIndex: 2,
+    border: `1px solid red`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer'
+  }
+}));
+
+const CustomDatePickerField = ({
+  setFieldValue,
+  setFieldTouched,
+  optional = false,
+  ...rest
+}) => {
+  const [isHidden, setIsHidden] = useState(optional);
   const datePickerRef = useRef(null);
   const classes = useStylesCustomTextField();
+  const classesOverlay = useStylesDatepickerOverlay();
+  const { name } = rest;
   useEffect(() => {
     flatpickr(datePickerRef.current, {
+      dateFormat: 'M j,Y H:i',
       onChange: (selectedDates, dateStr, instance) => {
-        console.log(instance);
-        console.log(dateStr);
+        const selectedDate = selectedDates[0] || null;
+        if (selectedDate) {
+          setFieldValue(name, moment(selectedDate).toISOString());
+        } else {
+          setFieldValue(name, '');
+        }
       },
+      onOpen: [
+        (selectedDates, dateStr, instance) => {
+          setFieldTouched(name, true);
+        }
+      ],
       enableTime: true,
       time_24hr: true,
-      todayBtn: true
+      todayBtn: true,
+      plugins: [
+        ShortcutButtonsPlugin({
+          button: [
+            {
+              label: 'Yesterday'
+            },
+            {
+              label: 'Today'
+            },
+            {
+              label: 'Tomorrow'
+            }
+          ],
+          label: 'or',
+          onClick: (index, fp) => {
+            let date;
+            switch (index) {
+              case 0:
+                date = moment().subtract(1, 'days');
+                break;
+              case 1:
+                date = moment();
+                break;
+              case 2:
+                date = moment().add(1, 'days');
+                break;
+              default:
+                break;
+            }
+            fp.setDate(date.toDate());
+          }
+        })
+      ]
     });
   }, []);
+  const onAddEndDateClick = e => {
+    e.preventDefault();
+    setIsHidden(false);
+  };
   return (
-    <TextField
-      InputProps={{ classes, disableUnderline: true }}
-      InputLabelProps={{ shrink: true }}
-      inputRef={datePickerRef}
-      {...rest}
-    />
+    <div className={classesOverlay.wrapper}>
+      {isHidden ? (
+        <div className={classesOverlay.root} onClick={onAddEndDateClick}>
+          <AddCircle /> End date
+        </div>
+      ) : (
+        ''
+      )}
+      <TextField
+        InputProps={{ classes, disableUnderline: true }}
+        InputLabelProps={{ shrink: true }}
+        inputRef={datePickerRef}
+        {...rest}
+      />
+    </div>
   );
 };
 
 const FormSchema = Yup.object().shape({
-  name: Yup.string().required('Event name is required!')
+  name: Yup.string().required('Event name is required!'),
+  startDate: Yup.string().required('Event start required!')
 });
 
 const initialValues = {
   name: '',
-  start: '',
-  end: ''
+  startDate: '',
+  endDate: '',
+  note: ''
 };
 
 const Form = ({ classes }) => {
   const [{ form }, dispatch] = useStateValue();
   const { isHidden } = form;
+  if (isHidden) {
+    return null;
+  }
   const onCloseClick = e => {
     e.preventDefault();
     dispatch({ type: 'SET_IS_HIDDEN', payload: { newIsHidden: true } });
   };
-
   return (
     <div className={classNames(classes.root, { [classes.show]: !isHidden })}>
-      <header>
-        <IconButton
-          color="primary"
-          aria-label="Close sidebar form"
-          onClick={onCloseClick}
-          href="#"
-        >
-          <Close />
-        </IconButton>
-      </header>
-      <section className={classes.formSection}>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={FormSchema}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              setSubmitting(false);
-            }, 400);
-          }}
-        >
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            isSubmitting
-            /* and other goodies */
-          }) => (
-            <form
-              className={classes.form}
-              onSubmit={handleSubmit}
-              autoComplete="off"
-              noValidate
-            >
+      <Formik
+        enableReinitialize={true}
+        initialValues={initialValues}
+        validationSchema={FormSchema}
+        onSubmit={(values, { setSubmitting }) => {
+          setTimeout(() => {
+            alert(JSON.stringify(values, null, 2));
+            setSubmitting(false);
+          }, 400);
+        }}
+      >
+        {({
+          values,
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          isSubmitting,
+          setFieldValue,
+          setFieldTouched
+        }) => (
+          <form
+            className={classes.form}
+            onSubmit={handleSubmit}
+            autoComplete="off"
+            noValidate
+          >
+            <header>
+              <IconButton
+                color="primary"
+                aria-label="Close sidebar form"
+                onClick={onCloseClick}
+                href="#"
+              >
+                <Close />
+              </IconButton>
+            </header>
+            <section className={classes.formSection}>
               <Grid container spacing={0}>
                 <Grid item xs={12}>
                   <CustomTextField
@@ -178,31 +283,68 @@ const Form = ({ classes }) => {
                   <CustomDatePickerField
                     label="Event start"
                     variant="filled"
-                    id="start"
-                    name="start"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.start}
-                    error={errors.start && touched.start}
+                    id="startDate"
+                    name="startDate"
+                    setFieldValue={setFieldValue}
+                    setFieldTouched={setFieldTouched}
+                    error={errors.startDate && touched.startDate}
                     helperText={
-                      errors.start && touched.start ? errors.start : ''
+                      errors.startDate && touched.startDate
+                        ? errors.startDate
+                        : ''
                     }
                     fullWidth
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  2
+                  <CustomDatePickerField
+                    label="Event end"
+                    variant="filled"
+                    id="endDate"
+                    name="endDate"
+                    setFieldValue={setFieldValue}
+                    setFieldTouched={setFieldTouched}
+                    error={errors.endDate && touched.endDate}
+                    helperText={
+                      errors.endDate && touched.endDate ? errors.endDate : ''
+                    }
+                    optional
+                    fullWidth
+                  />
                 </Grid>
               </Grid>
               <Grid container spacing={0}>
-                <Button color="primary" type="submit">
-                  Submit
-                </Button>
+                <Grid item xs={12}>
+                  <CustomTextField
+                    label="Note"
+                    variant="filled"
+                    id="note"
+                    name="note"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.note}
+                    rows={5}
+                    rowsMax={5}
+                    multiline
+                    fullWidth
+                  />
+                </Grid>
               </Grid>
-            </form>
-          )}
-        </Formik>
-      </section>
+            </section>
+            <footer className={classes.formFloatingFooter}>
+              <Button
+                color="primary"
+                variant="contained"
+                component="button"
+                type="submit"
+                fullWidth
+              >
+                Submit
+              </Button>
+            </footer>
+          </form>
+        )}
+      </Formik>
     </div>
   );
 };
