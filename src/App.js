@@ -1,6 +1,7 @@
 import React from 'react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { NotificationContainer } from 'react-light-notifications';
 import 'config/moment';
 import moment from 'moment';
 
@@ -10,6 +11,7 @@ import { StateProvider } from 'context/State';
 import Layout from 'components/Layout';
 import { fetchAllEvents } from 'actions/events';
 
+import 'react-light-notifications/lib/main.css';
 import 'typeface-roboto';
 
 const theme = createMuiTheme({
@@ -52,6 +54,7 @@ function App() {
       <MuiThemeProvider theme={theme}>
         <CssBaseline />
         <Layout />
+        <NotificationContainer />
       </MuiThemeProvider>
     </StateProvider>
   );

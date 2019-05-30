@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { NotificationManager } from 'react-light-notifications';
 
 import { useStateValue } from 'context/State';
 
@@ -12,10 +13,11 @@ import Close from '@material-ui/icons/Close';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 
-import 'flatpickr/dist/flatpickr.min.css';
 import CTextField from 'components/Sidebar/Form/CTextField';
 import DateField from 'components/Sidebar/Form/DateField';
 import ColorPicker from 'components/Sidebar/Form/ColorPicker';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const styles = theme => ({
   root: {
@@ -72,11 +74,12 @@ const Form = ({ classes }) => {
   };
   const [{ form, events }, dispatch] = useStateValue();
   const { isHidden, eventId = null } = form;
+  let selectedEvent;
   if (isHidden) {
     return null;
   }
   if (eventId) {
-    const selectedEvent =
+    selectedEvent =
       Array.isArray(events) && events.find(event => event.id === eventId);
     if (selectedEvent) {
       initialValues = { ...initialValues, ...selectedEvent };
@@ -89,8 +92,16 @@ const Form = ({ classes }) => {
   const onSubmit = (values, { setSubmitting }) => {
     if (eventId) {
       dispatch({ type: 'UPDATE_EVENT', payload: { eventId, values } });
+      NotificationManager.success({
+        title: 'Success',
+        message: 'Event was updated!'
+      });
     } else {
       dispatch({ type: 'CREATE_EVENT', payload: { values } });
+      NotificationManager.success({
+        title: 'Success',
+        message: 'New event was created!'
+      });
     }
     setSubmitting(false);
   };
