@@ -45,16 +45,16 @@ const styles = theme => ({
 const DATE_FORMAT = 'MMM DD,YYYY HH:mm';
 
 const Event = ({ data, classes }) => {
-  const { name, startDate, endDate, note, color } = data;
+  const { id, name, startDate, endDate, note, color } = data;
   const [isHidden, setIsHidden] = useState(true);
   const [, dispatch] = useStateValue();
   const onClick = e => {
     e.preventDefault();
     setIsHidden(!isHidden);
   };
-  const onEditClick = e => {
+  const onEditClick = id => e => {
     e.preventDefault();
-    dispatch({ type: 'SET_IS_HIDDEN', payload: { newIsHidden: false } });
+    dispatch({ type: 'EDIT_EVENT', payload: { eventId: id } });
   };
   let formattedDate = '';
   if (endDate) {
@@ -77,7 +77,7 @@ const Event = ({ data, classes }) => {
             <div>
               <IconButton
                 classes={{ root: classes.showNoteIconButton }}
-                onClick={onEditClick}
+                onClick={onEditClick(id)}
               >
                 <Edit />
               </IconButton>

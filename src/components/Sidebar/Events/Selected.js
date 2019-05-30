@@ -27,23 +27,28 @@ const comparator = (diffToDate, date1, date2) => {
 };
 
 const filterEvents = (events, currentMoment, selectedDate) => {
-  return events
-    .filter(event => {
-      const { startDate, endDate } = event;
-      if (endDate) {
-        return moment(selectedDate).within(
-          moment.range(moment(startDate), moment(endDate))
-        );
-      }
-      return moment(startDate).isSame(selectedDate, 'day');
-    })
-    .sort((event1, event2) => {
-      const { startDate: event1Start, endDate: event1End } = event1;
-      const { startDate: event2Start, endDate: event2End } = event2;
-      const event1Date = event1End ? event1End : event1Start;
-      const event2Date = event2End ? event2End : event2Start;
-      return comparator(currentMoment, event1Date, event2Date);
-    });
+  return Array.isArray(events)
+    ? events
+        .filter(event => {
+          const { startDate, endDate } = event;
+          if (endDate) {
+            return moment(selectedDate).within(
+              moment.range(
+                moment(startDate).startOf('day'),
+                moment(endDate).endOf('day')
+              )
+            );
+          }
+          return moment(startDate).isSame(selectedDate, 'day');
+        })
+        .sort((event1, event2) => {
+          const { startDate: event1Start, endDate: event1End } = event1;
+          const { startDate: event2Start, endDate: event2End } = event2;
+          const event1Date = event1End ? event1End : event1Start;
+          const event2Date = event2End ? event2End : event2Start;
+          return comparator(currentMoment, event1Date, event2Date);
+        })
+    : [];
 };
 
 const Events = ({ classes }) => {
