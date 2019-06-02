@@ -48,9 +48,6 @@ const filterDayEvents = (events, day) => {
 };
 
 const styles = () => ({
-  selected: {
-    background: 'red'
-  },
   gridContainer: {
     borderTop: '1px solid red',
     borderLeft: '1px solid red'
@@ -59,12 +56,22 @@ const styles = () => ({
     borderBottom: '1px solid red',
     boxShadow: 'inset -1px 0px 0px 0px red',
     cursor: 'pointer'
+  },
+  disabled: {
+    cursor: 'default',
+    background: '#efefef'
+  },
+  selected: {
+    background: 'red'
+  },
+  today: {
+    boxShadow: 'inset 0px 0px 0px 5px rgba(107,137,255,1)'
   }
 });
 
 const Index = ({ classes, startDate, events }) => {
   const [{ calendar }, dispatch] = useStateValue();
-  const { selectedDate } = calendar;
+  const { selectedDate, todayMoment, currentMoment } = calendar;
   let days = [];
   let day = moment(startDate);
   const onDayClick = newSelectedDate => () => {
@@ -75,12 +82,18 @@ const Index = ({ classes, startDate, events }) => {
     const dayEvents = filterDayEvents(events, day);
     days.push(
       <Grid
-        onClick={onDayClick(
-          !dayCloned.isSame(selectedDate, 'day') ? dayCloned : null
-        )}
+        onClick={
+          day.isSame(currentMoment, 'month')
+            ? onDayClick(
+                !dayCloned.isSame(selectedDate, 'day') ? dayCloned : null
+              )
+            : undefined
+        }
         key={'calendar-cell-' + i + '-day-' + day.toISOString()}
         className={classNames(classes.gridItem, {
-          [classes.selected]: day.isSame(selectedDate, 'day')
+          [classes.selected]: day.isSame(selectedDate, 'day'),
+          [classes.disabled]: !day.isSame(currentMoment, 'month'),
+          [classes.today]: day.isSame(todayMoment, 'day')
         })}
         item
         xs

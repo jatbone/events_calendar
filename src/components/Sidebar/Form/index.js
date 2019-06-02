@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { NotificationManager } from 'react-light-notifications';
+import randomColor from 'randomcolor';
 
 import { useStateValue } from 'context/State';
 
@@ -97,7 +98,11 @@ const Form = ({ classes }) => {
         message: 'Event was updated!'
       });
     } else {
-      dispatch({ type: 'CREATE_EVENT', payload: { values } });
+      const newEvent = {
+        id: events.length > 0 ? events[events.length - 1].id++ : 1,
+        ...values
+      };
+      dispatch({ type: 'CREATE_EVENT', payload: { values: newEvent } });
       NotificationManager.success({
         title: 'Success',
         message: 'New event was created!'
@@ -105,7 +110,8 @@ const Form = ({ classes }) => {
     }
     setSubmitting(false);
   };
-
+  const defaultColor =
+    initialValues.color || randomColor({ luminosity: 'light'});
   return (
     <div className={classNames(classes.root, { [classes.show]: !isHidden })}>
       <Formik
@@ -162,7 +168,7 @@ const Form = ({ classes }) => {
                   </Grid>
                   <Grid item xs={2}>
                     <ColorPicker
-                      defaultColor={initialValues.color}
+                      defaultColor={defaultColor}
                       setFieldValue={setFieldValue}
                       setFieldTouched={setFieldTouched}
                     />
