@@ -5,7 +5,7 @@ export default (state, action) => {
         ...state,
         selectedDate: action.payload.newSelectedDate
       };
-    case 'SET_CURRENT_MONTH':
+    case 'SET_CURRENT_MOMENT':
       return {
         ...state,
         currentMoment: action.payload.newCurrentMoment
