@@ -4,4 +4,10 @@ import { extendMoment } from 'moment-range';
 
 const moment = extendMoment(Moment);
 
+moment.updateLocale('en', {
+  week: {
+    dow: 1
+  }
+});
+
 // moment.locale('sk');

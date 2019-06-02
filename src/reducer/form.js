@@ -3,7 +3,8 @@ export default (state, action) => {
     case 'SET_IS_HIDDEN':
       return {
         ...state,
-        isHidden: action.payload.newIsHidden
+        isHidden: action.payload.newIsHidden,
+        eventId: null
       };
     case 'EDIT_EVENT':
       return {

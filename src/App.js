@@ -42,7 +42,8 @@ function App() {
     calendar: {
       currentMoment: moment(),
       todayMoment: moment(),
-      selectedDate: null
+      selectedDate: null,
+      weekView: false
     },
     events: fetchAllEvents(),
     form: {

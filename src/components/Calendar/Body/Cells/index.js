@@ -1,14 +1,14 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import moment from 'moment';
 
-import withStyles from '@material-ui/core/styles/withStyles';
 import { useStateValue } from 'context/State';
 
 import Grid from '@material-ui/core/Grid/index';
 
 import Content from 'components/Calendar/Body/Cells/Content';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 
 const filterDayEvents = (events, day) => {
   return Array.isArray(events)
@@ -47,7 +47,7 @@ const filterDayEvents = (events, day) => {
     : [];
 };
 
-const styles = () => ({
+const useStyles = makeStyles({
   gridContainer: {
     borderTop: '1px solid red',
     borderLeft: '1px solid red'
@@ -69,14 +69,34 @@ const styles = () => ({
   }
 });
 
-const Index = ({ classes, startDate, events }) => {
-  const [{ calendar }, dispatch] = useStateValue();
-  const { selectedDate, todayMoment, currentMoment } = calendar;
-  let days = [];
+const VeekView = ({ startDate, events, onDayClick }) => {
+  const [{ calendar }] = useStateValue();
+  const { selectedDate, todayMoment } = calendar;
+  const classes = useStyles();
   let day = moment(startDate);
-  const onDayClick = newSelectedDate => () => {
-    dispatch({ type: 'SET_SELECTED_DATE', payload: { newSelectedDate } });
-  };
+  const dayEvents = filterDayEvents(events, day);
+  return (
+    <Grid
+      onClick={onDayClick(!day.isSame(selectedDate, 'day') ? day : null)}
+      key={'calendar-cell-day-' + day.toISOString()}
+      className={classNames(classes.gridItem, {
+        [classes.selected]: day.isSame(selectedDate, 'day'),
+        [classes.today]: day.isSame(todayMoment, 'day')
+      })}
+      item
+      xs
+    >
+      <Content events={dayEvents} day={day} />
+    </Grid>
+  );
+};
+
+const MonthView = ({ startDate, events, onDayClick }) => {
+  const [{ calendar }] = useStateValue();
+  const { selectedDate, todayMoment, currentMoment } = calendar;
+  const classes = useStyles();
+  let day = moment(startDate);
+  let days = [];
   for (let i = 0; i < 7; i++) {
     const dayCloned = moment(day);
     const dayEvents = filterDayEvents(events, day);
@@ -89,7 +109,7 @@ const Index = ({ classes, startDate, events }) => {
               )
             : undefined
         }
-        key={'calendar-cell-' + i + '-day-' + day.toISOString()}
+        key={'calendar-cell-day-' + day.toISOString()}
         className={classNames(classes.gridItem, {
           [classes.selected]: day.isSame(selectedDate, 'day'),
           [classes.disabled]: !day.isSame(currentMoment, 'month'),
@@ -103,13 +123,32 @@ const Index = ({ classes, startDate, events }) => {
     );
     day.add(1, 'day');
   }
-  return <Fragment>{days}</Fragment>;
+  return days;
+};
+
+const Index = ({ startDate, events, weekView = false }) => {
+  const [, dispatch] = useStateValue();
+  const onDayClick = newSelectedDate => () => {
+    dispatch({
+      type: 'SET_SELECTED_DATE',
+      payload: {
+        newSelectedDate
+      }
+    });
+  };
+  if (weekView) {
+    return (
+      <VeekView startDate={startDate} events={events} onDayClick={onDayClick} />
+    );
+  }
+  return (
+    <MonthView startDate={startDate} events={events} onDayClick={onDayClick} />
+  );
 };
 
 Index.propTypes = {
-  classes: PropTypes.object.isRequired,
   startDate: PropTypes.object.isRequired,
   events: PropTypes.array.isRequired
 };
 
-export default withStyles(styles)(Index);
+export default Index;

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -8,11 +7,11 @@ import randomColor from 'randomcolor';
 
 import { useStateValue } from 'context/State';
 
-import withStyles from '@material-ui/core/styles/withStyles';
 import IconButton from '@material-ui/core/IconButton';
 import Close from '@material-ui/icons/Close';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 
 import CTextField from 'components/Sidebar/Form/CTextField';
 import DateField from 'components/Sidebar/Form/DateField';
@@ -20,7 +19,7 @@ import ColorPicker from 'components/Sidebar/Form/ColorPicker';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -57,7 +56,7 @@ const styles = theme => ({
     padding: theme.spacing(1),
     borderTop: `1px solid ${theme.palette.grey[100]}`
   }
-});
+}));
 
 const FormSchema = Yup.object().shape({
   name: Yup.string().required('Event name is required!'),
@@ -65,7 +64,8 @@ const FormSchema = Yup.object().shape({
   color: Yup.string().required('Event color is required!')
 });
 
-const Form = ({ classes }) => {
+const Form = () => {
+  const classes = useStyles();
   let initialValues = {
     name: '',
     startDate: '',
@@ -109,9 +109,10 @@ const Form = ({ classes }) => {
       });
     }
     setSubmitting(false);
+    dispatch({ type: 'SET_IS_HIDDEN', payload: { newIsHidden: true } });
   };
   const defaultColor =
-    initialValues.color || randomColor({ luminosity: 'light'});
+    initialValues.color || randomColor({ luminosity: 'light' });
   return (
     <div className={classNames(classes.root, { [classes.show]: !isHidden })}>
       <Formik
@@ -248,8 +249,4 @@ const Form = ({ classes }) => {
   );
 };
 
-Form.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
-export default withStyles(styles)(Form);
+export default Form;

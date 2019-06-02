@@ -10,6 +10,11 @@ export default (state, action) => {
         ...state,
         currentMoment: action.payload.newCurrentMoment
       };
+    case 'SET_WEEK_VIEW':
+      return {
+        ...state,
+        weekView: action.payload.newWeekView
+      };
     default:
       return state;
   }

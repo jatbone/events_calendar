@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import withStyles from '@material-ui/core/styles/withStyles';
 
 import CardContent from '@material-ui/core/CardContent/index';
 import Card from '@material-ui/core/Card/index';
 import CardHeader from '@material-ui/core/CardHeader/index';
 import Event from 'components/Calendar/Body/Cells/Event';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 
 const DATE_FORMAT = 'D';
 
-const styles = () => ({
+const useStyles = makeStyles({
   selected: {
     background: 'red'
   },
@@ -28,7 +28,8 @@ const styles = () => ({
   }
 });
 
-const Content = ({ classes, day, events }) => {
+const Content = ({ day, events }) => {
+  const classes = useStyles();
   return (
     <Card classes={{ root: classes.card }}>
       <CardHeader title={day.format(DATE_FORMAT)} />
@@ -53,9 +54,8 @@ const Content = ({ classes, day, events }) => {
 };
 
 Content.propTypes = {
-  classes: PropTypes.object.isRequired,
   day: PropTypes.object.isRequired,
   events: PropTypes.array.isRequired
 };
 
-export default withStyles(styles)(Content);
+export default Content;
