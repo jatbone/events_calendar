@@ -3,7 +3,6 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { fade } from '@material-ui/core/styles';
-import { getProp } from 'common/helpers';
 
 const useStylesCustomTextField = makeStyles(theme => ({
   root: {

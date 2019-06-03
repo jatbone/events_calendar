@@ -45,7 +45,8 @@ const styles = theme => ({
 const DATE_FORMAT = 'MMM DD,YYYY HH:mm';
 
 const Event = ({ data, classes }) => {
-  const { id, name, startDate, endDate, note, color } = data;
+  // const { id, name, startDate, endDate, note, color } = data;
+  const { id, name, startDate, endDate, note } = data;
   const [isHidden, setIsHidden] = useState(true);
   const [, dispatch] = useStateValue();
   const onClick = e => {
@@ -78,12 +79,14 @@ const Event = ({ data, classes }) => {
               <IconButton
                 classes={{ root: classes.showNoteIconButton }}
                 onClick={onEditClick(id)}
+                href="#"
               >
                 <Edit />
               </IconButton>
               <IconButton
                 classes={{ root: classes.showNoteIconButton }}
                 onClick={onClick}
+                href="#"
               >
                 <MoreVertIcon />
               </IconButton>

@@ -7,14 +7,13 @@ import EditIcon from '@material-ui/icons/Edit';
 import '@simonwep/pickr/dist/pickr.min.css';
 import Button from '@material-ui/core/Button';
 
-let pickr;
-
 const useStyles = makeStyles({
   root: props => ({
     backgroundColor: props.backgroundColor
   })
 });
 
+let pickr;
 const ColorPicker = ({ defaultColor, setFieldValue, setFieldTouched }) => {
   const [color, setColor] = useState(defaultColor);
   const colorPickerRef = useRef(null);
