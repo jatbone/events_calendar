@@ -7,9 +7,15 @@ import ChevronRight from '@material-ui/icons/ChevronRight';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import Button from '@material-ui/core/Button';
+import MenuIcon from '@material-ui/icons/Menu';
 
 import { useStateValue } from 'context/State';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Box from '@material-ui/core/Box';
+import Hidden from '@material-ui/core/Hidden';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import useTheme from '@material-ui/core/styles/useTheme';
 
 const MONTH_FORMAT = 'MMMM YYYY';
 const WEEK_FORMAT = 'DD.MM.YYYY';
@@ -113,15 +119,16 @@ const useHeaderStyles = makeStyles(theme => ({
     display: 'block',
     textTransform: 'uppercase',
     width: '100%',
-    padding: '1.75em 0',
     borderBottom: `1px solid ${theme.palette.grey[200]}`
   }
 }));
 
 const Header = () => {
+  const theme = useTheme();
   const classes = useHeaderStyles();
-  const [{ calendar }, dispatch] = useStateValue();
-  const { weekView } = calendar;
+  const [{ app }, dispatch] = useStateValue();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
+  const { sidebarIsHidden } = app;
   const onTodayClick = () => {
     dispatch({
       type: 'SET_CURRENT_MOMENT',
@@ -131,30 +138,37 @@ const Header = () => {
   const onAddClick = () => {
     dispatch({ type: 'SET_IS_HIDDEN', payload: { newIsHidden: false } });
   };
-  const onChangeViewClick = () => {
-    dispatch({ type: 'SET_WEEK_VIEW', payload: { newWeekView: !weekView } });
+  const onToggleMenuClick = () => {
+    dispatch({
+      type: 'SET_SIDEBAR_HIDDEN',
+      payload: { newSidebarIsHidden: !sidebarIsHidden }
+    });
   };
   return (
     <div className={classes.root}>
-      <Grid container spacing={0} justify="center">
-        <Grid item xs={6}>
-          {weekView ? <WeekSwithcer /> : <MonthSwitcher />}
-        </Grid>
+      <Grid container spacing={0} justify="center" alignItems="center">
         <Grid item xs={2}>
-          <Button variant="contained" onClick={onTodayClick}>
-            Today
-          </Button>
+          {matches ? <WeekSwithcer /> : <MonthSwitcher />}
         </Grid>
-        <Grid item xs={2}>
-          <Button variant="contained" onClick={onAddClick}>
-            Add new event
-          </Button>
+        <Grid item xs={8}>
+          <Box display="flex" justifyContent="center">
+            <Button variant="contained" onClick={onTodayClick}>
+              Today
+            </Button>
+            <Button variant="contained" onClick={onAddClick}>
+              Add new event
+            </Button>
+          </Box>
         </Grid>
-        <Grid item xs={2}>
-          <Button variant="contained" onClick={onChangeViewClick}>
-            Show week
-          </Button>
-        </Grid>
+        <Hidden mdUp>
+          <Grid item xs={2}>
+            <Box display="flex" justifyContent="flex-end">
+              <IconButton onClick={onToggleMenuClick}>
+                <MenuIcon />
+              </IconButton>
+            </Box>
+          </Grid>
+        </Hidden>
       </Grid>
     </div>
   );

@@ -6,6 +6,8 @@ import { useStateValue } from 'context/State';
 import Grid from '@material-ui/core/Grid';
 
 import Cells from 'components/Calendar/Body/Cells';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import useTheme from '@material-ui/core/styles/useTheme';
 
 const WeekView = ({ currentMoment, events }) => {
   const startDate = moment(currentMoment).startOf('week');
@@ -46,15 +48,12 @@ const MonthView = ({ currentMoment, events }) => {
 };
 
 const Rows = ({ events }) => {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
   const [{ calendar }] = useStateValue();
-  const { currentMoment, weekView } = calendar;
-  if (weekView) {
-    return (
-      <WeekView
-        currentMoment={currentMoment}
-        events={events}
-      />
-    );
+  const { currentMoment } = calendar;
+  if (matches) {
+    return <WeekView currentMoment={currentMoment} events={events} />;
   }
   return <MonthView currentMoment={currentMoment} events={events} />;
 };

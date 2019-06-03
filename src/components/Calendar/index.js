@@ -1,17 +1,20 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import Header from 'components/Calendar/Header';
 import WeekDays from 'components/Calendar/WeekDays';
 import Body from 'components/Calendar/Body';
-import Grid from '@material-ui/core/Grid';
+import useTheme from '@material-ui/core/styles/useTheme';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const Calendar = () => {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
   return (
-    <Grid xs={12} md={8} xl={9} item>
+    <Fragment>
       <Header />
-      <WeekDays />
+      {!matches ? <WeekDays /> : ''}
       <Body />
-    </Grid>
+    </Fragment>
   );
 };
 
