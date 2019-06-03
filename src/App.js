@@ -39,6 +39,9 @@ const theme = createMuiTheme({
 
 function App() {
   const initialState = {
+    app: {
+      sidebarIsHidden: true
+    },
     calendar: {
       currentMoment: moment(),
       todayMoment: moment(),
