@@ -88,7 +88,7 @@ const Form = () => {
   }
   const onCloseClick = e => {
     e.preventDefault();
-    dispatch({ type: 'SET_IS_HIDDEN', payload: { newIsHidden: true } });
+    dispatch({ type: 'ADD_NEW_EVENT', payload: { newIsHidden: true } });
   };
   const onSubmit = (values, { setSubmitting }) => {
     if (eventId) {
@@ -109,7 +109,7 @@ const Form = () => {
       });
     }
     setSubmitting(false);
-    dispatch({ type: 'SET_IS_HIDDEN', payload: { newIsHidden: true } });
+    dispatch({ type: 'ADD_NEW_EVENT', payload: { newIsHidden: true } });
   };
   const defaultColor =
     initialValues.color || randomColor({ luminosity: 'light' });

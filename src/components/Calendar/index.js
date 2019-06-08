@@ -8,11 +8,11 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const Calendar = () => {
   const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.down('sm'));
+  const showWeekDays = !useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Fragment>
       <Header />
-      {!matches ? <WeekDays /> : ''}
+      {showWeekDays ? <WeekDays /> : ''}
       <Body />
     </Fragment>
   );

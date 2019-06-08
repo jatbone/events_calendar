@@ -1,6 +1,6 @@
 export default (state, action) => {
   switch (action.type) {
-    case 'SET_IS_HIDDEN':
+    case 'ADD_NEW_EVENT':
       return {
         ...state,
         isHidden: action.payload.newIsHidden,

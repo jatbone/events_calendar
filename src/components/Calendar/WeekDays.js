@@ -5,7 +5,7 @@ import { useStateValue } from 'context/State';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
-const DATE_FORMAT = 'dddd';
+import { WEEKDAYS_DATE_FORMAT } from 'constants/index';
 
 const WeekDays = () => {
   const [{ calendar }] = useStateValue();
@@ -17,7 +17,7 @@ const WeekDays = () => {
     days.push(
       <Grid item key={i} xs>
         <Typography variant="body2" gutterBottom>
-          {moment(dayOfWeek).format(DATE_FORMAT)}
+          {moment(dayOfWeek).format(WEEKDAYS_DATE_FORMAT)}
         </Typography>
       </Grid>
     );

@@ -13,12 +13,14 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { useStateValue } from 'context/State';
 import IconButton from '@material-ui/core/IconButton';
 import Box from '@material-ui/core/Box';
-import Hidden from '@material-ui/core/Hidden';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import useTheme from '@material-ui/core/styles/useTheme';
 
-const MONTH_FORMAT = 'MMMM YYYY';
-const WEEK_FORMAT = 'DD.MM.YYYY';
+import {
+  HEADER_SWITCHER_MONTH_FORMAT,
+  HEADER_SWITCHER_WEEK_FORMAT
+} from 'constants/index';
+import { filterSelectedDayEvents, filterUpcommingEvents } from 'common/filters';
 
 const useMonthSwitcherStyles = makeStyles(theme => ({
   root: {
@@ -62,7 +64,7 @@ const MonthSwitcher = () => {
         <ChevronLeft />
       </Link>
       <Typography variant="body1">
-        {moment(currentMoment).format(MONTH_FORMAT)}
+        {moment(currentMoment).format(HEADER_SWITCHER_MONTH_FORMAT)}
       </Typography>
       <Link component="button" onClick={nextMonth} className={classes.arrow}>
         <ChevronRight />
@@ -101,11 +103,11 @@ const WeekSwithcer = () => {
         Week{' '}
         {moment(currentMoment)
           .startOf('week')
-          .format(WEEK_FORMAT)}{' '}
+          .format(HEADER_SWITCHER_WEEK_FORMAT)}{' '}
         -{' '}
         {moment(currentMoment)
           .endOf('week')
-          .format(WEEK_FORMAT)}
+          .format(HEADER_SWITCHER_WEEK_FORMAT)}
       </Typography>
       <Link component="button" onClick={nextWeek} className={classes.arrow}>
         <ChevronRight />
@@ -123,21 +125,19 @@ const useHeaderStyles = makeStyles(theme => ({
   }
 }));
 
-const Header = () => {
-  const theme = useTheme();
-  const classes = useHeaderStyles();
-  const [{ app }, dispatch] = useStateValue();
-  const matches = useMediaQuery(theme.breakpoints.down('sm'));
+const ShowMenuButton = () => {
+  const [{ app, events, calendar }, dispatch] = useStateValue();
   const { sidebarIsHidden } = app;
-  const onTodayClick = () => {
-    dispatch({
-      type: 'SET_CURRENT_MOMENT',
-      payload: { newCurrentMoment: moment() }
-    });
-  };
-  const onAddClick = () => {
-    dispatch({ type: 'SET_IS_HIDDEN', payload: { newIsHidden: false } });
-  };
+  const { todayMoment, selectedDate } = calendar;
+  const upcommingEventsCount = filterUpcommingEvents(events, todayMoment, false)
+    .length;
+  const selectedDayEventsCount = filterSelectedDayEvents(
+    events,
+    todayMoment,
+    selectedDate,
+    false
+  ).length;
+
   const onToggleMenuClick = () => {
     dispatch({
       type: 'SET_SIDEBAR_HIDDEN',
@@ -145,10 +145,39 @@ const Header = () => {
     });
   };
   return (
+    <div>
+      <IconButton onClick={onToggleMenuClick}>
+        <MenuIcon />
+      </IconButton>
+      <div>{upcommingEventsCount}</div>
+      <div>{selectedDayEventsCount}</div>
+    </div>
+  );
+};
+
+const Header = () => {
+  const theme = useTheme();
+  const classes = useHeaderStyles();
+  const [, dispatch] = useStateValue();
+  const showWeekSwitcher = useMediaQuery(theme.breakpoints.down('sm'));
+  const onTodayClick = () => {
+    dispatch({
+      type: 'SET_CURRENT_MOMENT',
+      payload: { newCurrentMoment: moment() }
+    });
+  };
+  const onAddClick = () => {
+    dispatch({
+      type: 'SET_SIDEBAR_HIDDEN',
+      payload: { newSidebarIsHidden: false }
+    });
+    dispatch({ type: 'ADD_NEW_EVENT', payload: { newIsHidden: false } });
+  };
+  return (
     <div className={classes.root}>
       <Grid container spacing={0} justify="center" alignItems="center">
         <Grid item xs={2}>
-          {matches ? <WeekSwithcer /> : <MonthSwitcher />}
+          {showWeekSwitcher ? <WeekSwithcer /> : <MonthSwitcher />}
         </Grid>
         <Grid item xs={8}>
           <Box display="flex" justifyContent="center">
@@ -160,15 +189,15 @@ const Header = () => {
             </Button>
           </Box>
         </Grid>
-        <Hidden mdUp>
+        {showWeekSwitcher ? (
           <Grid item xs={2}>
             <Box display="flex" justifyContent="flex-end">
-              <IconButton onClick={onToggleMenuClick}>
-                <MenuIcon />
-              </IconButton>
+              <ShowMenuButton />
             </Box>
           </Grid>
-        </Hidden>
+        ) : (
+          ''
+        )}
       </Grid>
     </div>
   );

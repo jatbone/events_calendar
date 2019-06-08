@@ -6,11 +6,13 @@ import Card from '@material-ui/core/Card/index';
 import CardHeader from '@material-ui/core/CardHeader/index';
 import Event from 'components/Calendar/Body/Cells/Event';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import useTheme from "@material-ui/core/styles/useTheme";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import useTheme from '@material-ui/core/styles/useTheme';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
-const DATE_FORMAT = 'D';
-const DATE_WEEKVIEW_FORMAT = 'D.M.YYYY';
+import {
+  CARD_HEADER_DATE_FORMAT,
+  CARD_HEADER_DATE_WEEKVIEW_FORMAT
+} from 'constants/index';
 
 const useStyles = makeStyles({
   selected: {
@@ -34,10 +36,16 @@ const useStyles = makeStyles({
 const Content = ({ day, events }) => {
   const classes = useStyles();
   const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.down('sm'));
+  const titleWeekFormatting = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Card classes={{ root: classes.card }}>
-      <CardHeader title={matches ? day.format(DATE_WEEKVIEW_FORMAT) : day.format(DATE_FORMAT)} />
+      <CardHeader
+        title={
+          titleWeekFormatting
+            ? day.format(CARD_HEADER_DATE_WEEKVIEW_FORMAT)
+            : day.format(CARD_HEADER_DATE_FORMAT)
+        }
+      />
       <CardContent classes={{ root: classes.cardContent }}>
         {events.length
           ? events.map(event => {

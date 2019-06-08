@@ -14,6 +14,8 @@ import Collapse from '@material-ui/core/Collapse';
 import { Typography } from '@material-ui/core';
 import Edit from '@material-ui/icons/Edit';
 
+import { SIDEBAR_EVENT_DATE_FORMAT } from 'constants/index';
+
 const styles = theme => ({
   card: {
     maxWidth: '100%'
@@ -42,8 +44,6 @@ const styles = theme => ({
   }
 });
 
-const DATE_FORMAT = 'MMM DD,YYYY HH:mm';
-
 const Event = ({ data, classes }) => {
   // const { id, name, startDate, endDate, note, color } = data;
   const { id, name, startDate, endDate, note } = data;
@@ -60,11 +60,11 @@ const Event = ({ data, classes }) => {
   let formattedDate = '';
   if (endDate) {
     formattedDate =
-      moment(startDate).format(DATE_FORMAT) +
+      moment(startDate).format(SIDEBAR_EVENT_DATE_FORMAT) +
       ' - ' +
-      moment(endDate).format(DATE_FORMAT);
+      moment(endDate).format(SIDEBAR_EVENT_DATE_FORMAT);
   } else {
-    formattedDate = moment(startDate).format(DATE_FORMAT);
+    formattedDate = moment(startDate).format(SIDEBAR_EVENT_DATE_FORMAT);
   }
   return (
     <div>

@@ -8,6 +8,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import AddCircle from '@material-ui/icons/AddCircle';
 import CTextField from 'components/Sidebar/Form/CTextField';
 
+import { FLATPICKR_DATE_FORMAT } from 'constants/index';
 
 const useStylesDatepickerOverlay = makeStyles(() => ({
   wrapper: {
@@ -43,7 +44,10 @@ const DateField = ({
   useEffect(() => {
     flatpickr(datePickerRef.current, {
       defaultDate,
-      dateFormat: 'M j,Y H:i',
+      dateFormat: FLATPICKR_DATE_FORMAT,
+      enableTime: true,
+      time_24hr: true,
+      todayBtn: true,
       onChange: selectedDates => {
         const selectedDate = selectedDates[0] || null;
         if (selectedDate) {
@@ -57,9 +61,6 @@ const DateField = ({
           setFieldTouched(name, true);
         }
       ],
-      enableTime: true,
-      time_24hr: true,
-      todayBtn: true,
       plugins: [
         ShortcutButtonsPlugin({
           button: [
@@ -90,11 +91,12 @@ const DateField = ({
                 break;
             }
             fp.setDate(date.toDate());
+            setFieldValue(name, date.toISOString());
           }
         })
       ]
     });
-  }, []);
+  }, [name, defaultDate, setFieldValue, setFieldTouched]);
   const onAddEndDateClick = e => {
     e.preventDefault();
     setIsHidden(false);
@@ -108,10 +110,7 @@ const DateField = ({
       ) : (
         ''
       )}
-      <CTextField
-        inputRef={datePickerRef}
-        {...rest}
-      />
+      <CTextField inputRef={datePickerRef} {...rest} />
     </div>
   );
 };

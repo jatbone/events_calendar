@@ -49,10 +49,10 @@ const MonthView = ({ currentMoment, events }) => {
 
 const Rows = ({ events }) => {
   const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.down('sm'));
+  const showWeekView = useMediaQuery(theme.breakpoints.down('sm'));
   const [{ calendar }] = useStateValue();
   const { currentMoment } = calendar;
-  if (matches) {
+  if (showWeekView) {
     return <WeekView currentMoment={currentMoment} events={events} />;
   }
   return <MonthView currentMoment={currentMoment} events={events} />;

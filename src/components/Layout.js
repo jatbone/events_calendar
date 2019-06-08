@@ -10,7 +10,7 @@ import Hidden from '@material-ui/core/Hidden';
 import CloseIcon from '@material-ui/icons/Close';
 import Fab from '@material-ui/core/Fab';
 
-const drawerWidth = '320px';
+import { SIDEBAR_WIDTH } from 'constants/index';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -18,12 +18,12 @@ const useStyles = makeStyles(theme => ({
   },
   drawer: {
     [theme.breakpoints.up('md')]: {
-      width: drawerWidth,
+      width: SIDEBAR_WIDTH,
       flexShrink: 0
     }
   },
   drawerPaper: {
-    width: drawerWidth
+    width: SIDEBAR_WIDTH
   },
   tempDrawerPaper: {
     width: '90%',

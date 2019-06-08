@@ -44,7 +44,7 @@ const ColorPicker = ({ defaultColor, setFieldValue, setFieldTouched }) => {
         setFieldTouched('color', true);
         setFieldValue('color', newColor);
       });
-  }, []);
+  }, [defaultColor, setFieldValue, setFieldTouched]);
   useEffect(
     () => () => {
       if (pickr) {
