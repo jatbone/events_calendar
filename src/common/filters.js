@@ -101,3 +101,40 @@ export const filterPastEvents = (events, todayMoment, sort = true) => {
   }
   return result;
 };
+
+export const filterDayEvents = (events, day, sort = true) => {
+  if (!Array.isArray(events)) {
+    return [];
+  }
+  const result = events.filter(event => {
+    const eventStartDate = moment(event.startDate);
+    const eventEndDate = event.endDate ? moment(event.endDate) : null;
+    if (eventEndDate) {
+      return moment(day).within(
+        moment.range(eventStartDate.startOf('day'), eventEndDate.endOf('day'))
+      );
+    }
+    return moment(day).isSame(eventStartDate, 'day');
+  });
+  if (sort) {
+    result.sort((event1, event2) => {
+      const event1tStartDate = moment(event1.startDate);
+      const event1EndDate = event1.endDate ? moment(event1.endDate) : null;
+      const event2tStartDate = moment(event2.startDate);
+      const event2EndDate = event2.endDate ? moment(event2.endDate) : null;
+      if (event1EndDate && event2EndDate) {
+        return (
+          event2EndDate.diff(event2tStartDate, 'minutes') -
+          event1EndDate.diff(event1tStartDate, 'minutes')
+        );
+      } else if (event1EndDate) {
+        return event1EndDate.diff(event1tStartDate, 'minutes') > 1 ? -1 : 0;
+      } else if (event2EndDate) {
+        return event2EndDate.diff(event2tStartDate, 'minutes') > 1 ? 1 : 0;
+      } else {
+        return 0;
+      }
+    });
+  }
+  return result;
+};

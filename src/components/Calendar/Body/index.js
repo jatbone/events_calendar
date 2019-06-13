@@ -7,12 +7,13 @@ import Rows from 'components/Calendar/Body/Rows';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useStateValue } from 'context/State';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
-    borderTop: '1px solid red',
-    borderLeft: '1px solid red'
+    borderTop: `1px solid ${theme.palette.grey['300']}`,
+    // borderLeft: `1px solid ${theme.palette.grey['300']}`,
+    background: '#fff'
   }
-});
+}));
 
 const filterEvents = (events, currentMoment) => {
   const startOfMonth = moment(currentMoment).startOf('month');
@@ -42,7 +43,5 @@ const Body = () => {
     </Grid>
   );
 };
-
-
 
 export default Body;

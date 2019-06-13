@@ -9,65 +9,38 @@ import Grid from '@material-ui/core/Grid/index';
 
 import Content from 'components/Calendar/Body/Cells/Content';
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import { filterDayEvents } from 'common/filters';
 
-const filterDayEvents = (events, day) => {
-  return Array.isArray(events)
-    ? events
-        .filter(event => {
-          const eventStartDate = moment(event.startDate);
-          const eventEndDate = event.endDate ? moment(event.endDate) : null;
-          if (eventEndDate) {
-            return moment(day).within(
-              moment.range(
-                eventStartDate.startOf('day'),
-                eventEndDate.endOf('day')
-              )
-            );
-          }
-          return moment(day).isSame(eventStartDate, 'day');
-        })
-        .sort((event1, event2) => {
-          const event1tStartDate = moment(event1.startDate);
-          const event1EndDate = event1.endDate ? moment(event1.endDate) : null;
-          const event2tStartDate = moment(event2.startDate);
-          const event2EndDate = event2.endDate ? moment(event2.endDate) : null;
-          if (event1EndDate && event2EndDate) {
-            return (
-              event2EndDate.diff(event2tStartDate, 'minutes') -
-              event1EndDate.diff(event1tStartDate, 'minutes')
-            );
-          } else if (event1EndDate) {
-            return event1EndDate.diff(event1tStartDate, 'minutes') > 1 ? -1 : 0;
-          } else if (event2EndDate) {
-            return event2EndDate.diff(event2tStartDate, 'minutes') > 1 ? 1 : 0;
-          } else {
-            return 0;
-          }
-        })
-    : [];
-};
-
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   gridContainer: {
-    borderTop: '1px solid red',
-    borderLeft: '1px solid red'
+    // borderTop: `1px solid ${theme.palette.grey['300']}`,
+    // borderLeft: `1px solid ${theme.palette.grey['300']}`,
+    position: 'relative'
   },
   gridItem: {
-    borderBottom: '1px solid red',
-    boxShadow: 'inset -1px 0px 0px 0px red',
-    cursor: 'pointer'
+    borderBottom: `1px solid ${theme.palette.grey['300']}`,
+    boxShadow: `inset -1px 0px 0px 0px ${theme.palette.grey['300']}`,
+    cursor: 'pointer',
+    '&:last-child': {
+      boxShadow: 'none'
+    }
   },
   disabled: {
     cursor: 'default',
-    background: '#efefef'
-  },
-  selected: {
-    background: 'red'
+    background: '#fffdf8'
   },
   today: {
-    boxShadow: 'inset 0px 0px 0px 5px rgba(107,137,255,1)'
+    boxShadow: 'inset 0px 0px 0px 1px rgba(5,107,255,1)'
+  },
+  selected: {
+    zIndex: 1,
+    boxShadow:
+      'inset 0px 0px 0px 4px rgba(5,107,255,1), 0px 0px 10px rgba(0,0,0,.2) !important',
+    background: 'rgba(5,107,255,.05) !important',
+    transition: 'all .1s',
+
   }
-});
+}));
 
 const VeekView = ({ startDate, events, onDayClick }) => {
   const [{ calendar }] = useStateValue();
@@ -100,6 +73,7 @@ const MonthView = ({ startDate, events, onDayClick }) => {
   for (let i = 0; i < 7; i++) {
     const dayCloned = moment(day);
     const dayEvents = filterDayEvents(events, day);
+    const isSelected = day.isSame(selectedDate, 'day');
     days.push(
       <Grid
         onClick={
@@ -111,14 +85,14 @@ const MonthView = ({ startDate, events, onDayClick }) => {
         }
         key={'calendar-cell-day-' + day.toISOString()}
         className={classNames(classes.gridItem, {
-          [classes.selected]: day.isSame(selectedDate, 'day'),
+          [classes.selected]: isSelected,
           [classes.disabled]: !day.isSame(currentMoment, 'month'),
           [classes.today]: day.isSame(todayMoment, 'day')
         })}
         item
         xs
       >
-        <Content events={dayEvents} day={dayCloned} />
+        <Content events={dayEvents} day={dayCloned} isSelected={isSelected} />
       </Grid>
     );
     day.add(1, 'day');

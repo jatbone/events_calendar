@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import CardContent from '@material-ui/core/CardContent/index';
 import Card from '@material-ui/core/Card/index';
@@ -14,15 +15,19 @@ import {
   CARD_HEADER_DATE_WEEKVIEW_FORMAT
 } from 'constants/index';
 
-const useStyles = makeStyles({
-  selected: {
-    background: 'red'
-  },
-  card: {
-    minHeight: '160px',
+const useStyles = makeStyles(theme => ({
+  root: {
+    padding: '0 0 10px 0',
     borderRadius: 0,
     boxShadow: 'none',
-    background: 'transparent'
+    background: 'transparent',
+    minHeight: '120px',
+    [theme.breakpoints.up('lg')]: {
+      minHeight: '160px'
+    },
+    [theme.breakpoints.up('xl')]: {
+      minHeight: '200px'
+    }
   },
   cardContent: {
     padding: 0,
@@ -30,16 +35,39 @@ const useStyles = makeStyles({
     '&:last-child': {
       paddingBottom: 0
     }
+  },
+  cardHeader: {
+    padding: '15px'
+  },
+  cardTitle: {
+    fontSize: '1em',
+    color: theme.palette.grey[900],
+    fontWeight: 'bold',
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '1.6em'
+    }
+  },
+  cardTitleSelected: {
+    fontSize: '1em',
+    fontWeight: 'bold',
+    color: 'rgba(5,107,255,1)',
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '1.6em'
+    }
   }
-});
+}));
 
-const Content = ({ day, events }) => {
+const Content = ({ day, events, isSelected = false }) => {
   const classes = useStyles();
   const theme = useTheme();
   const titleWeekFormatting = useMediaQuery(theme.breakpoints.down('sm'));
   return (
-    <Card classes={{ root: classes.card }}>
+    <Card classes={{ root: classes.root }}>
       <CardHeader
+        classes={{
+          root: classes.cardHeader,
+          title: isSelected ? classes.cardTitleSelected : classes.cardTitle
+        }}
         title={
           titleWeekFormatting
             ? day.format(CARD_HEADER_DATE_WEEKVIEW_FORMAT)

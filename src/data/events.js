@@ -6,7 +6,7 @@ const events = [
     name: 'Event title 1',
     note:
       'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi libero omnis possimus! Ad beatae, dicta dolor, dolorem esse explicabo, fugit in laudantium maxime nam nobis nulla repellendus vel vero voluptate.',
-    startDate: moment([2019, 4, 3, 13, 30]).toISOString(),
+    startDate: moment([2019, 5, 3, 13, 30]).toISOString(),
     color: '#7cc6ff'
   },
   {
@@ -14,8 +14,8 @@ const events = [
     name: 'Event title 2',
     note:
       'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi libero omnis possimus! Ad beatae, dicta dolor, dolorem esse explicabo, fugit in laudantium maxime nam nobis nulla repellendus vel vero voluptate.',
-    startDate: moment([2019, 4, 25]).toISOString(),
-    endDate: moment([2019, 4, 28]).toISOString(),
+    startDate: moment([2019, 5, 25]).toISOString(),
+    endDate: moment([2019, 5, 28]).toISOString(),
     color: '#dfdfdf'
   },
   {
@@ -23,7 +23,7 @@ const events = [
     name: 'Event title 3',
     note:
       'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi libero omnis possimus! Ad beatae, dicta dolor, dolorem esse explicabo, fugit in laudantium maxime nam nobis nulla repellendus vel vero voluptate.',
-    startDate: moment([2019, 4, 24]).toISOString(),
+    startDate: moment([2019, 5, 24]).toISOString(),
     color: '#65df91'
   },
   {
@@ -31,8 +31,8 @@ const events = [
     name: 'Event title 4',
     note:
       'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi libero omnis possimus! Ad beatae, dicta dolor, dolorem esse explicabo, fugit in laudantium maxime nam nobis nulla repellendus vel vero voluptate.',
-    startDate: moment([2019, 4, 1]).toISOString(),
-    endDate: moment([2019, 4, 4, 13, 31]).toISOString(),
+    startDate: moment([2019, 5, 1]).toISOString(),
+    endDate: moment([2019, 5, 4, 13, 31]).toISOString(),
     color: '#c183df'
   }
 ];
