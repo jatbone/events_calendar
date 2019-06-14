@@ -28,15 +28,14 @@ const theme = createMuiTheme({
       '"Apple Color Emoji"',
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"'
-    ].join(',')
+    ].join(','),
   },
   palette: {
     primary: {
       main: '#056bff'
     },
     background: {
-      // default: '#f5faff'
-      default: '#f4f7fb'
+      default: '#f4f5f6'
     }
   }
 });
