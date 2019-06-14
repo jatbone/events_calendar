@@ -10,7 +10,6 @@ import { useStateValue } from 'context/State';
 const useStyles = makeStyles(theme => ({
   root: {
     borderTop: `1px solid ${theme.palette.grey['300']}`,
-    // borderLeft: `1px solid ${theme.palette.grey['300']}`,
     background: '#fff'
   }
 }));
