@@ -4,11 +4,12 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { NotificationManager } from 'react-light-notifications';
 import randomColor from 'randomcolor';
+import moment from 'moment';
 
 import { useStateValue } from 'context/State';
 
 import IconButton from '@material-ui/core/IconButton';
-import Close from '@material-ui/icons/Close';
+import ArrowBack from '@material-ui/icons/ArrowBack';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -31,13 +32,35 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     bottom: 0
   },
+  header: {
+    padding: '10px 15px',
+    fontSize: '1.6em',
+    color: theme.palette.grey[600],
+    borderBottom: '1px solid #e0edff',
+    display: 'flex',
+    alignItems: 'center',
+    minHeight: '56px'
+  },
+  headerCloseButton: {
+    padding: '2px'
+  },
   show: {
     display: 'flex',
     flexWrap: 'wrap',
     flexDirection: 'column'
   },
   formSection: {
-    padding: theme.spacing(1)
+    padding: '15px'
+  },
+  formRow: {
+    marginBottom: '10px'
+  },
+  formStartDateWrapper: {
+    marginBottom: '10px',
+    [theme.breakpoints.up('xl')]: {
+      marginBottom: '0',
+      marginRight: '10px'
+    }
   },
   form: {
     display: 'flex',
@@ -45,24 +68,19 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
     flexDirection: 'column'
   },
-  formControl: {
-    margin: theme.spacing(0)
-  },
-  filledInput: {
-    borderRadius: '5px'
-  },
-  formFloatingFooter: {
+  formFooter: {
     width: '100%',
-    padding: theme.spacing(1),
+    padding: '15px',
     borderTop: `1px solid ${theme.palette.grey[100]}`
+  },
+  colorPickerColumn: {
+    display: 'flex'
+  },
+  eventNameTextField: {
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0
   }
 }));
-
-const FormSchema = Yup.object().shape({
-  name: Yup.string().required('Event name is required!'),
-  startDate: Yup.string().required('Event start is required!'),
-  color: Yup.string().required('Event color is required!')
-});
 
 const Form = () => {
   const classes = useStyles();
@@ -118,7 +136,22 @@ const Form = () => {
       <Formik
         enableReinitialize={true}
         initialValues={initialValues}
-        validationSchema={FormSchema}
+        validationSchema={Yup.object().shape({
+          name: Yup.string().required('Event name is required!'),
+          startDate: Yup.string().required('Event start is required!'),
+          color: Yup.string().required('Event color is required!'),
+          endDate: Yup.string().test(
+            'endDate min test',
+            'Event end date must be after start date!',
+            function(value) {
+              let startDate = this.resolve(Yup.ref('startDate'));
+              if (startDate && value) {
+                return moment(value).isAfter(startDate);
+              }
+              return true;
+            }
+          )
+        })}
         onSubmit={onSubmit}
       >
         {({
@@ -139,18 +172,19 @@ const Form = () => {
               autoComplete="off"
               noValidate
             >
-              <header>
+              <header className={classes.header}>
                 <IconButton
                   color="primary"
                   aria-label="Close sidebar form"
                   onClick={onCloseClick}
+                  classes={{ root: classes.headerCloseButton }}
                   href="#"
                 >
-                  <Close />
+                  <ArrowBack />
                 </IconButton>
               </header>
               <section className={classes.formSection}>
-                <Grid container spacing={0}>
+                <Grid container spacing={0} className={classes.formRow}>
                   <Grid item xs={10}>
                     <CTextField
                       label="Event name"
@@ -164,10 +198,11 @@ const Form = () => {
                       helperText={
                         errors.name && touched.name ? errors.name : ''
                       }
+                      classes={{ root: classes.eventNameTextField }}
                       fullWidth
                     />
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid item xs={2} className={classes.colorPickerColumn}>
                     <ColorPicker
                       defaultColor={defaultColor}
                       setFieldValue={setFieldValue}
@@ -175,26 +210,28 @@ const Form = () => {
                     />
                   </Grid>
                 </Grid>
-                <Grid container spacing={0}>
-                  <Grid item xs={6}>
-                    <DateField
-                      label="Event start"
-                      variant="filled"
-                      id="startDate"
-                      name="startDate"
-                      setFieldValue={setFieldValue}
-                      setFieldTouched={setFieldTouched}
-                      error={errors.startDate && touched.startDate}
-                      helperText={
-                        errors.startDate && touched.startDate
-                          ? errors.startDate
-                          : ''
-                      }
-                      defaultDate={initialValues.startDate || null}
-                      fullWidth
-                    />
+                <Grid container spacing={0} className={classes.formRow}>
+                  <Grid item xs={12} xl={6}>
+                    <div className={classes.formStartDateWrapper}>
+                      <DateField
+                        label="Event start"
+                        variant="filled"
+                        id="startDate"
+                        name="startDate"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                        error={errors.startDate && touched.startDate}
+                        helperText={
+                          errors.startDate && touched.startDate
+                            ? errors.startDate
+                            : ''
+                        }
+                        defaultDate={initialValues.startDate || null}
+                        fullWidth
+                      />
+                    </div>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} xl={6}>
                     <DateField
                       label="Event end"
                       variant="filled"
@@ -212,7 +249,7 @@ const Form = () => {
                     />
                   </Grid>
                 </Grid>
-                <Grid container spacing={0}>
+                <Grid container spacing={0} className={classes.formRow}>
                   <Grid item xs={12}>
                     <CTextField
                       label="Note"
@@ -230,8 +267,9 @@ const Form = () => {
                   </Grid>
                 </Grid>
               </section>
-              <footer className={classes.formFloatingFooter}>
+              <footer className={classes.formFooter}>
                 <Button
+                  disabled={isSubmitting}
                   color="primary"
                   variant="contained"
                   component="button"

@@ -1,17 +1,17 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 import { useStateValue } from 'context/State';
 
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
 import Upcoming from 'components/Sidebar/Events/Upcoming';
 import Past from 'components/Sidebar/Events/Past';
 import Selected from 'components/Sidebar/Events/Selected';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Typography from '@material-ui/core/Typography';
+import { SIDEBAR_EVENTS_SELECTED_DATE_FORMAT } from 'constants/index';
 
 const EVENTS_TYPE_UPCOMING = 'upcoming';
 const EVENTS_TYPE_SELECTED = 'selected';
@@ -22,69 +22,62 @@ const styles = theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper
   },
-  tabs: {
-    backgroundColor: theme.palette.background.default,
-    // backgroundColor: theme.palette.background.paper,
-    // backgroundColor: theme.palette.primary.main,
-    minHeight: 0
-    // backgroundColor: '#e8e8ef'
-    // backgroundColor: '#f6f6f9'
-  },
-  indicator: {
-    display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-    '& > div': {
-      backgroundColor: theme.palette.primary.main,
-      width: '90%'
-    }
-  },
-  tab: {
-    // borderRight: '1px solid #e0edff',
+  title: {
+    padding: '10px 15px',
+    fontSize: '1.6em',
+    color: theme.palette.grey[600],
     borderBottom: '1px solid #e0edff',
-    // boxShadow: 'inset 0px -1px 0px 0px #e0edff',
-    flexGrow: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: 0,
-    minHeight: 0,
-    maxWidth: '100%',
-    padding: '8px 0',
-    color: '#999',
-    // color: '#fff',
-    fontWeight: theme.typography.fontWeightMedium,
-    fontSize: '1em',
-    textTransform: 'none',
-    '&:focus': {
-      opacity: 1
-    },
-    '&:hover': {
-      opacity: 1
-    },
-    '&:last-child': {
-      borderRight: 'none'
-    }
-  },
-  tabSelected: {
-    color: '#222',
-    // backgroundColor: theme.palette.primary.main,
-    // backgroundColor: theme.palette.background.default,
-    fontWeight: theme.typography.fontWeightMedium
-    // boxShadow: `inset 0px -1px 0px 0px ${theme.palette.background.paper}`
-  },
-  tabTextWrapper: {
-    width: 'auto'
-    // backgroundColor: 'rgba(255,255,255,.5)',
-    // padding: '5px 10px'
-  },
-  textActive: {
-    // display: 'inline-block',
-    // color: '#fff',
-    // background: theme.palette.primary.main
+    fontWeight: 400
   },
   btnGroupWrapper: {
-    padding: '10px'
+    padding: '15px',
+    background: '#fff',
+    borderBottom: '1px solid #e0edff'
+  },
+  buttonGroup: {
+    borderRadius: '3px',
+    background: '#fff'
+  },
+  button: {
+    borderRadius: '3px',
+    padding: '6px 16px',
+    opacity: 0.4,
+    '&:hover': {
+      opacity: 1,
+      color: theme.palette.grey[500],
+      background: theme.palette.grey[100],
+      borderColor: theme.palette.grey[300]
+    }
+  },
+  buttonIsActive: {
+    opacity: 1,
+    color: theme.palette.grey[500],
+    background: theme.palette.grey[100],
+    borderColor: theme.palette.grey[300],
+    '&:not(:last-child)': {
+      borderRight: 'none'
+    },
+    '&:hover': {
+      opacity: 1,
+      color: theme.palette.grey[500],
+      background: theme.palette.grey[100],
+      borderColor: theme.palette.grey[300]
+    }
+  },
+  buttonSelectedIsActive: {
+    opacity: 1,
+    color: '#fff',
+    background: theme.palette.primary.main,
+    borderColor: theme.palette.primary.main,
+    '&:hover': {
+      color: '#fff',
+      background: theme.palette.primary.main,
+      borderColor: theme.palette.primary.main
+    }
+  },
+  buttonLabel: {
+    fontSize: '1em',
+    textTransform: 'none'
   }
 });
 
@@ -92,18 +85,13 @@ const Events = ({ classes }) => {
   const [value, setValue] = useState(0);
   const [{ calendar }] = useStateValue();
   const { selectedDate } = calendar;
-  const handleChange = (event, value) => {
+  const onButtonClick = value => e => {
+    e.preventDefault();
     setValue(value);
   };
   useEffect(() => {
     setValue(0);
   }, [selectedDate]);
-  const tabsClasses = { root: classes.tabs, indicator: classes.indicator };
-  const tabClasses = {
-    root: classes.tab,
-    selected: classes.tabSelected,
-    wrapper: classes.tabTextWrapper
-  };
   let isActive = EVENTS_TYPE_UPCOMING;
   if (selectedDate) {
     if (value === 0) {
@@ -123,62 +111,54 @@ const Events = ({ classes }) => {
       isActive = EVENTS_TYPE_PAST;
     }
   }
-
   return (
     <div className={classes.wrapper}>
-      <div>
-        <Typography>Event title</Typography>
+      <Typography variant="h6" className={classes.title}>
+        Your events
+      </Typography>
+      <div className={classes.btnGroupWrapper}>
+        <ButtonGroup
+          fullWidth
+          aria-label="Full width outlined button group"
+          classes={{ root: classes.buttonGroup }}
+        >
+          {selectedDate ? (
+            <Button
+              href="#"
+              classes={{ root: classes.button, label: classes.buttonLabel }}
+              className={classNames({
+                [classes.buttonSelectedIsActive]:
+                  isActive === EVENTS_TYPE_SELECTED
+              })}
+              onClick={onButtonClick(0)}
+            >
+              {selectedDate.format(SIDEBAR_EVENTS_SELECTED_DATE_FORMAT)}
+            </Button>
+          ) : (
+            ''
+          )}
+          <Button
+            href="#"
+            classes={{ root: classes.button, label: classes.buttonLabel }}
+            className={classNames({
+              [classes.buttonIsActive]: isActive === EVENTS_TYPE_UPCOMING
+            })}
+            onClick={onButtonClick(selectedDate ? 1 : 0)}
+          >
+            Upcoming
+          </Button>
+          <Button
+            href="#"
+            classes={{ root: classes.button, label: classes.buttonLabel }}
+            className={classNames({
+              [classes.buttonIsActive]: isActive === EVENTS_TYPE_PAST
+            })}
+            onClick={onButtonClick(selectedDate ? 2 : 1)}
+          >
+            Past
+          </Button>
+        </ButtonGroup>
       </div>
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        classes={tabsClasses}
-        TabIndicatorProps={{ children: <div /> }}
-      >
-        {selectedDate ? (
-          <Tab
-            label={
-              <span
-                className={
-                  isActive === EVENTS_TYPE_SELECTED ? classes.textActive : ''
-                }
-              >
-                {selectedDate.format('YYYY-MM-DD')}
-              </span>
-            }
-            classes={tabClasses}
-            disableRipple
-          />
-        ) : (
-          ''
-        )}
-        <Tab
-          label={
-            <span
-              className={
-                isActive === EVENTS_TYPE_UPCOMING ? classes.textActive : ''
-              }
-            >
-              Upcoming
-            </span>
-          }
-          classes={tabClasses}
-          disableRipple
-        />
-        <Tab
-          label={
-            <span
-              className={
-                isActive === EVENTS_TYPE_PAST ? classes.textActive : ''
-              }
-            >
-              Past
-            </span>
-          }
-          classes={tabClasses}
-          disableRipple
-        />
-      </Tabs>
       {selectedDate ? (
         <Fragment>
           {isActive === EVENTS_TYPE_SELECTED && <Selected />}

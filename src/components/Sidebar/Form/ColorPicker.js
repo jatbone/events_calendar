@@ -2,19 +2,34 @@ import React, { useEffect, useRef, useState } from 'react';
 import Pickr from '@simonwep/pickr/dist/pickr.es5.min';
 
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import EditIcon from '@material-ui/icons/Edit';
-
-import '@simonwep/pickr/dist/pickr.min.css';
+import ColorLens from '@material-ui/icons/ColorLens';
+import { invertColor } from 'common/helpers';
 import Button from '@material-ui/core/Button';
 
+import '@simonwep/pickr/dist/pickr.min.css';
 const useStyles = makeStyles({
   root: props => ({
-    backgroundColor: props.backgroundColor
+    backgroundColor: props.backgroundColor,
+    padding: 0,
+    minWidth: 0,
+    width: '100%',
+    borderRadius: 0,
+    borderTopRightRadius: 3,
+    borderBottomRightRadius: 3,
+    boxShadow: 'none',
+    '&:hover': {
+      backgroundColor: props.backgroundColor,
+      boxShadow: 'none'
+    },
+    '&:focus': {
+      backgroundColor: props.backgroundColor,
+      boxShadow: 'none'
+    }
   })
 });
 
-let pickr;
 const ColorPicker = ({ defaultColor, setFieldValue, setFieldTouched }) => {
+  let pickr;
   const [color, setColor] = useState(defaultColor);
   const colorPickerRef = useRef(null);
   const classes = useStyles({ backgroundColor: color });
@@ -60,7 +75,7 @@ const ColorPicker = ({ defaultColor, setFieldValue, setFieldTouched }) => {
       className={classes.root}
       href="#"
     >
-      <EditIcon />
+      <ColorLens style={{ color: invertColor(color, true) }} />
     </Button>
   );
 };

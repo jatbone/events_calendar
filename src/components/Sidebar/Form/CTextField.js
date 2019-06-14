@@ -2,21 +2,20 @@ import React from 'react';
 
 import TextField from '@material-ui/core/TextField';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { fade } from '@material-ui/core/styles';
 
 const useStylesCustomTextField = makeStyles(theme => ({
   root: {
-    border: '1px solid #e2e2e1',
+    border: '1px solid #f4f2f7',
     overflow: 'hidden',
-    borderRadius: 4,
-    backgroundColor: '#fcfcfb',
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    borderRadius: 3,
+    backgroundColor: '#f4f2f7',
+    transition: theme.transitions.create(['border-color']),
     '&:hover': {
-      backgroundColor: '#fff'
+      backgroundColor: '#f4f2f7',
     },
     '&$focused': {
-      backgroundColor: '#fff',
-      boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
+      backgroundColor: '#f4f2f7',
+      boxShadow: 'none',
       borderColor: theme.palette.primary.main
     }
   },

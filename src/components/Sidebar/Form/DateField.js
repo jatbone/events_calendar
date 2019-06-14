@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-
 import moment from 'moment';
 import flatpickr from 'flatpickr';
 import ShortcutButtonsPlugin from 'shortcut-buttons-flatpickr';
@@ -15,14 +14,14 @@ const useStylesDatepickerOverlay = makeStyles(() => ({
     position: 'relative'
   },
   root: {
+    borderRadius: 3,
     position: 'absolute',
     top: 0,
     left: 0,
     bottom: 0,
     right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: '#f4f2f7',
     zIndex: 2,
-    border: `1px solid red`,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

@@ -15,7 +15,6 @@ const useStyles = makeStyles({
 
 const Events = () => {
   const classes = useStyles();
-
   const [{ calendar, events }] = useStateValue();
   const { todayMoment, selectedDate } = calendar;
   const filtered = filterSelectedDayEvents(events, todayMoment, selectedDate);

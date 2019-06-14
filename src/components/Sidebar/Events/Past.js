@@ -21,11 +21,11 @@ const Events = () => {
   return (
     <div className={classes.root}>
       {!isEmpty(filtered) ? (
-        <ul>
+        <div>
           {filtered.map(event => (
             <Event key={'past-date-event-' + event.id} data={event} />
           ))}
-        </ul>
+        </div>
       ) : (
         ''
       )}
