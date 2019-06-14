@@ -13,8 +13,6 @@ import { filterDayEvents } from 'common/filters';
 
 const useStyles = makeStyles(theme => ({
   gridContainer: {
-    // borderTop: `1px solid ${theme.palette.grey['300']}`,
-    // borderLeft: `1px solid ${theme.palette.grey['300']}`,
     position: 'relative'
   },
   gridItem: {
@@ -30,15 +28,14 @@ const useStyles = makeStyles(theme => ({
     background: '#fffdf8'
   },
   today: {
-    boxShadow: 'inset 0px 0px 0px 1px rgba(5,107,255,1)'
+    boxShadow: 'inset 0px 0px 0px 1px rgba(5,107,255,1) !important'
   },
   selected: {
     zIndex: 1,
     boxShadow:
       'inset 0px 0px 0px 4px rgba(5,107,255,1), 0px 0px 10px rgba(0,0,0,.2) !important',
     background: 'rgba(5,107,255,.05) !important',
-    transition: 'all .1s',
-
+    transition: 'all .1s'
   }
 }));
 

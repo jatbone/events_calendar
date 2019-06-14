@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 
 import CardContent from '@material-ui/core/CardContent/index';
 import Card from '@material-ui/core/Card/index';
@@ -30,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   cardContent: {
-    padding: 0,
+    padding: '0 !important',
     overflow: 'hidden',
     '&:last-child': {
       paddingBottom: 0
