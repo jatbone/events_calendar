@@ -28,8 +28,8 @@ const useStyles = makeStyles({
   })
 });
 
+let pickr;
 const ColorPicker = ({ defaultColor, setFieldValue, setFieldTouched }) => {
-  let pickr;
   const [color, setColor] = useState(defaultColor);
   const colorPickerRef = useRef(null);
   const classes = useStyles({ backgroundColor: color });
