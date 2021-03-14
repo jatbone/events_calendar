@@ -11,7 +11,7 @@
     "formik": "^1.5.7",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.13.1",
     "prop-types": "^15.7.2",
     "randomcolor": "^0.5.4",
     "react": "^16.8.6",
